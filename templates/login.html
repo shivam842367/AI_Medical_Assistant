@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AI Medical Assistant</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="register-page">
+
+    <div class="left-panel">
+
+        <h1>Welcome Back</h1>
+
+        <p>
+            Access your AI-powered medical assistant,
+            manage your health records and receive intelligent healthcare support.
+        </p>
+
+        <div class="animation-area">
+
+            <div class="brain-network">
+
+                <span class="node n1"></span>
+                <span class="node n2"></span>
+                <span class="node n3"></span>
+                <span class="node n4"></span>
+                <span class="node n5"></span>
+                <span class="node n6"></span>
+
+                <div class="pulse p1"></div>
+                <div class="pulse p2"></div>
+
+            </div>
+
+        </div>
+
+        <div class="ecg">
+
+            <svg viewBox="0 0 900 120">
+                <path d="M0 60 L80 60 L110 60 L135 20 L160 100 L185 40 L210 60 L900 60"/>
+            </svg>
+
+        </div>
+
+    </div>
+
+    <div class="login-container">
+
+        <h1>🔐 Login</h1>
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter Email">
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter Password">
+
+        <button id="login-btn">
+            Login
+        </button>
+
+        <p id="message"></p>
+
+    </div>
+
+    <script>
+
+        // Agar user already login hai
+        if (localStorage.getItem("token")) {
+            window.location.href = "/chat";
+        }
+
+        document.getElementById("login-btn").onclick = async () => {
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            if (email === "" || password === "") {
+                document.getElementById("message").innerHTML =
+                    "Please enter email and password.";
+                return;
+            }
+
+            const formData = new URLSearchParams();
+
+            formData.append("username", email);
+            formData.append("password", password);
+
+            const response = await fetch("/user/login", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+
+                body: formData
+
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.access_token) {
+
+                localStorage.setItem("token", data.access_token);
+
+                window.location.href = "/chat";
+
+            } else {
+
+                document.getElementById("message").innerHTML =
+                    data.detail || "Login Failed";
+
+            }
+
+        };
+
+    </script>
+
+</body>
+
+</html>

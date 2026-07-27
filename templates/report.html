@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report Analyzer</title>
+
+    <link rel="stylesheet" href="/static/report.css">
+</head>
+
+
+<body>
+
+<div class="page">
+
+    <div class="left-panel">
+
+        <h1>Medical Report Analyzer</h1>
+
+        <p>
+            Upload your medical report and let AI explain every result
+            in simple language with health insights and recommendations.
+        </p>
+
+    </div>
+
+    <div class="upload-card">
+
+        <h2>Analyze Report</h2>
+
+        <form id="uploadForm">
+
+            <label class="upload-box">
+
+                <input
+                    type="file"
+                    id="reportFile"
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    hidden>
+
+                <div class="upload-content">
+
+                    <h3>Choose Medical Report</h3>
+
+                    <p>PDF • JPG • PNG</p>
+
+                    <p id="fileName">No file selected</p>   
+
+                </div>
+
+            </label>
+
+            <button type="submit">
+                Analyze Report
+            </button>
+
+        </form>
+        <div id="result" style="display:none; margin-top:25px;">
+
+            <h3>AI Medical Analysis</h3>
+
+            <button id="downloadBtn" style="display:none;">
+                Download Report
+            </button>
+             
+            <div id="loading" style="display:none;">
+                🤖 AI is analyzing your report...
+            </div>
+
+            <div id="analysis"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/report.js"></script>
+
+</body>
+</html>

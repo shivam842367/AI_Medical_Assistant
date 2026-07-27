@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Assistant</title>
+     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/chat.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+        <h2>🩺 AI Medical Assistant</h2>
+
+        <button id="new-chat-btn">+ New Chat</button>
+
+        <button id="report-btn">
+            📑 Report Analyzer
+        </button>
+
+        <input
+            id="search-chat"
+            type="text"
+            placeholder="🔍 Search chats..."
+        >
+
+        <div id="history"></div>
+
+    </aside>
+
+    <!-- Main Chat -->
+    <main class="chat-area">
+
+        <div class="chat-header">
+
+            <h2>Medical Assistant</h2>
+
+            <div>
+
+                <button id="theme-btn">
+                    🌙
+                </button>
+
+                <button id="download-btn">
+                    📄 Download Report
+                </button>
+
+                <button id="logout-btn">
+                    Logout
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="chat-box"></div>
+
+        <div class="input-area">
+
+            <input
+                id="user-input"
+                type="text"
+                placeholder="Ask your medical question..."
+            >
+
+            <button id="mic-btn" title="Speak">
+                🎤
+            </button>
+
+            <button id="send-btn">
+                Send
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="/static/script.js"></script>
+
+</body>
+</html>

@@ -1,32 +1,36 @@
 import os
+from typing import Optional
 import fitz
-import easyocr
 
 from dotenv import load_dotenv
 from google import genai
+from app.config.settings import settings
 
 load_dotenv()
 
-def get_genai_client():
-    api_key = os.getenv("GEMINI_API_KEY")
+_easyocr_reader = None
+
+
+def get_ocr_reader():
+    global _easyocr_reader
+    if _easyocr_reader is None:
+        import easyocr
+        _easyocr_reader = easyocr.Reader(['en'])
+    return _easyocr_reader
+
+
+def get_genai_client() -> Optional[genai.Client]:
+    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
     if not api_key:
         return None
     try:
         return genai.Client(api_key=api_key)
-    except Exception:
+    except Exception as e:
+        print(f"Failed to initialize GenAI Client: {e}")
         return None
 
-# OCR Reader (Lazy Loaded)
-_ocr_reader = None
 
-def get_ocr_reader():
-    global _ocr_reader
-    if _ocr_reader is None:
-        _ocr_reader = easyocr.Reader(['en'], verbose=False)
-    return _ocr_reader
-
-
-def extract_text(file_path: str, ocr_reader=None):
+def extract_text(file_path: str):
 
     extension = os.path.splitext(file_path)[1].lower()
 
@@ -47,8 +51,8 @@ def extract_text(file_path: str, ocr_reader=None):
     # ---------------- IMAGE ----------------
     elif extension in [".png", ".jpg", ".jpeg"]:
 
-        reader_inst = ocr_reader if ocr_reader is not None else get_ocr_reader()
-        result = reader_inst.readtext(file_path)
+        reader = get_ocr_reader()
+        result = reader.readtext(file_path)
 
         text = ""
 
@@ -60,9 +64,9 @@ def extract_text(file_path: str, ocr_reader=None):
     return ""
 
 
-def analyze_report(file_path: str, ocr_reader=None):
+def analyze_report(file_path: str):
 
-    report_text = extract_text(file_path, ocr_reader=ocr_reader)
+    report_text = extract_text(file_path)
 
     if not report_text.strip():
 
@@ -123,13 +127,18 @@ Medical Report:
 {report_text}
 """
 
-    try:
-        client = get_genai_client()
-        if not client:
-            return "⚠ GEMINI_API_KEY environment variable is not configured. Please set your Gemini API key in .env or Streamlit secrets."
+    client = get_genai_client()
+    if not client:
+        return """
+⚠ GEMINI_API_KEY is not configured or invalid.
 
+Please set a valid GEMINI_API_KEY in your environment variables to analyze medical reports.
+"""
+
+    try:
+        model_name = settings.GEMINI_MODEL or "gemini-2.5-flash"
         response = client.models.generate_content(
-            model="models/gemini-3.5-flash",
+            model=model_name,
             contents=prompt
         )
 

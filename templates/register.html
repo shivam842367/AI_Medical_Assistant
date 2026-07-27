@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AI Medical Assistant</title>
+
+    <link rel="stylesheet" href="/static/style.css"> 
+</head>
+<body>
+
+<div class="register-page">
+
+    <div class="left-panel">
+        <div class="animation-area">
+
+            <div class="brain-network">
+
+                <span class="node n1"></span>
+                <span class="node n2"></span>
+                <span class="node n3"></span>
+                <span class="node n4"></span>
+                <span class="node n5"></span>
+                <span class="node n6"></span>
+
+                <div class="pulse p1"></div>
+                <div class="pulse p2"></div>
+
+            </div>
+
+       </div>
+
+        <h1>AI Medical Assistant</h1> 
+
+        <p>
+            Smart Healthcare powered by Artificial Intelligence.
+            Fast diagnosis, secure medical records and intelligent assistance.
+        </p>
+
+    <div class="animation-area">
+
+    <div class="dna"></div>
+
+<div class="animation-area">
+
+    <div class="dna"></div>
+    
+    <div class="ecg">
+
+<svg viewBox="0 0 900 120">
+
+<path d="
+
+M0 60
+L80 60
+L120 60
+L140 35
+L150 85
+L165 10
+L180 110
+L200 60
+L280 60
+L300 60
+L320 35
+L330 85
+L345 10
+L360 110
+L380 60
+L900 60
+
+"/>
+
+</svg>
+
+</div>
+
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+
+</div>
+
+    <div class="plus plus1"></div>
+    <div class="plus plus2"></div>
+    <div class="plus plus3"></div>
+
+</div>
+
+</div>
+
+<div class="login-container">
+
+    <h1>Create Account</h1>
+
+    <p class="subtitle">
+    Join AI Medical Assistant and experience smarter healthcare.
+    </p>
+
+    <input
+        type="text"
+        id="name"
+        placeholder="Enter Name">
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Enter Email">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Enter Password">
+
+    <button id="register-btn">
+        Register
+    </button>
+
+    <p id="message"></p>
+
+    </div>
+</div>
+
+
+<script>
+console.log("Register JS Loaded");
+
+document.getElementById("register-btn").addEventListener("click", async function () {
+
+    console.log("Button Clicked");
+
+    try {
+
+        const response = await fetch("/user/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                full_name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value
+            })
+        });
+
+        console.log("Status:", response.status);
+
+        const data = await response.json();
+
+        console.log("Response:", data);
+
+        if (response.ok) {
+            alert("Registration Successful");
+            window.location.href = "/login";
+        } else {
+            alert(JSON.stringify(data));
+        }
+
+    } catch (err) {
+        console.error(err);
+        alert(err);
+    }
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1072 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+
+    background:linear-gradient(-45deg,#2563eb,#06b6d4,#9333ea,#3b82f6);
+    background-size:400% 400%;
+    animation:gradientBG 12s ease infinite;
+}
+
+/* ================= CHAT PAGE ================= */
+
+.container{
+    width:1200px;
+    height:92vh;
+    background:#ffffff;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    overflow:hidden;
+    display:flex;
+}
+
+/* Sidebar */
+
+.sidebar{
+    width:280px;
+    background:#1f2937;
+    color:white;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+}
+
+.sidebar h2{
+    text-align:center;
+    margin-bottom:20px;
+    font-size:24px;
+}
+
+#new-chat-btn{
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    font-size:16px;
+    margin-bottom:20px;
+}
+
+#new-chat-btn:hover{
+    background:#1d4ed8;
+}
+#search-chat{
+    width:100%;
+    padding:12px;
+    margin-bottom:18px;
+    border:none;
+    border-radius:10px;
+    outline:none;
+    font-size:15px;
+    background:#334155;
+    color:white;
+}
+
+#search-chat::placeholder{
+    color:#cbd5e1;
+}
+
+#history{
+    flex:1;
+    overflow-y:auto;
+}
+
+/* History */
+
+.history-item{
+    padding:12px;
+    margin-bottom:10px;
+    border-radius:10px;
+    background:#334155;
+    color:white;
+    cursor:pointer;
+    transition:.3s;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.history-item:hover{
+    background:#475569;
+}
+
+/* Chat Area */
+
+.chat-area{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    padding:25px;
+}
+
+.chat-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+.chat-header h2{
+    font-size:32px;
+}
+
+#logout-btn{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#ef4444;
+    color:white;
+    cursor:pointer;
+}
+
+#logout-btn:hover{
+    background:#dc2626;
+}
+
+/* Chat Box */
+
+#chat-box{
+    flex:1;
+    background:#f8fafc;
+    border:1px solid #ddd;
+    border-radius:15px;
+    padding:20px;
+    overflow-y:auto;
+
+    display:flex;
+    flex-direction:column;
+}
+
+/* User Message */
+
+.user{
+    align-self:flex-end;
+    max-width:70%;
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+    color:#fff;
+    padding:14px 18px;
+    margin:12px 0;
+    border-radius:20px 20px 5px 20px;
+    line-height:1.7;
+    box-shadow:0 4px 15px rgba(37,99,235,.25);
+    animation:fadeUp .25s ease;
+}
+
+/* AI Message */
+
+.bot{
+    align-self:flex-start;
+    max-width:75%;
+    background:#ffffff;
+    color:#222;
+    padding:14px 18px;
+    margin:12px 0;
+    border-radius:20px 20px 20px 5px;
+    border:1px solid #e5e7eb;
+    line-height:1.8;
+    box-shadow:0 4px 15px rgba(0,0,0,.06);
+    animation:fadeUp .25s ease;
+}
+
+/* Input */
+
+.input-area{
+    display:flex;
+    margin-top:20px;
+}
+
+#user-input{
+    flex:1;
+    padding:15px;
+    border:1px solid #ccc;
+    border-radius:12px 0 0 12px;
+    outline:none;
+    font-size:16px;
+}
+
+#send-btn{
+    width:160px;
+    border:none;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    border-radius:0 12px 12px 0;
+}
+
+#send-btn:hover{
+    background:#1d4ed8;
+}
+
+/* ================= LOGIN PAGE ================= */
+
+
+
+/* ================= REGISTER PAGE ================= */
+
+.login-container{
+
+    width:480px;
+    padding:45px;
+
+    border-radius:25px;
+
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    border:1px solid rgba(255,255,255,0.25);
+
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+
+    text-align:center;
+
+    animation:fadeUp .8s ease;
+    transition:all .4s ease;
+
+    position:relative;
+    overflow:hidden;
+}
+
+position: relative;
+overflow: hidden;
+
+.login-container::before{
+    content:"";
+    position:absolute;
+    top:-50%;
+    left:-50%;
+    width:200%;
+    height:200%;
+
+    background:linear-gradient(
+        45deg,
+        transparent,
+        rgba(255,255,255,.15),
+        transparent
+    );
+
+    transform:rotate(25deg);
+
+    animation:shine 6s linear infinite;
+}
+
+@keyframes shine{
+
+    from{
+        transform:translateX(-120%) rotate(25deg);
+    }
+
+    to{
+        transform:translateX(120%) rotate(25deg);
+    }
+
+}
+
+.login-container:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:0 30px 60px rgba(0,0,0,.35);
+
+}
+
+.login-container::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-50%;
+    left:-80%;
+
+    width:80px;
+    height:220%;
+
+    background:rgba(255,255,255,.18);
+
+    transform:rotate(25deg);
+
+    transition:.8s;
+
+}
+
+.login-container:hover::before{
+
+    left:140%;
+
+}
+
+.login-container h1{
+
+    font-size:36px;
+    font-weight:700;
+    color:#111827;
+
+    margin-bottom:12px;
+
+}
+
+.login-container p{
+
+    color:#4b5563;
+    margin-bottom:25px;
+    font-size:15px;
+
+}
+
+.login-container input{
+
+    width:100%;
+    padding:15px 18px;
+
+    margin-bottom:18px;
+
+    border:1px solid rgba(255,255,255,.35);
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.65);
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:all .35s ease;
+
+    transform:translateY(0);
+
+    box-shadow:0 4px 12px rgba(0,0,0,.05);
+
+}
+
+.login-container input:focus{
+
+    border-color:#2563eb;
+
+    background:white;
+
+    transform:translateY(-2px) scale(1.02);
+
+    box-shadow:
+        0 12px 30px rgba(37,99,235,.18),
+        0 0 0 4px rgba(37,99,235,.10);
+
+}
+
+.login-container button{
+
+    width:100%;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:linear-gradient(135deg,#2563eb,#3b82f6);
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    box-shadow:0 10px 25px rgba(37,99,235,.30);
+
+    position:relative;
+    
+    overflow:hidden;
+
+}
+
+.login-container button:hover{
+
+    transform:translateY(-4px) scale(1.02);
+
+    box-shadow:
+        0 18px 35px rgba(37,99,235,.45);
+
+}
+
+.login-container button::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-120%;
+
+    width:60%;
+    height:100%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.45),
+        transparent
+    );
+
+    transform:skewX(-25deg);
+
+    transition:.7s;
+
+}
+
+.login-container button:hover::before{
+
+    left:160%;
+
+}
+
+.login-container a{
+
+    color:#2563eb;
+
+    text-decoration:none;
+
+    font-weight:600;
+
+}
+
+.login-container a:hover{
+
+    text-decoration:underline;
+
+}
+
+.time{
+    font-size:11px;
+    opacity:.75;
+    text-align:right;
+    margin-top:8px;
+}
+
+.bot .time{
+    color:#777;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+body::before,
+body::after{
+
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    filter:blur(100px);
+    z-index:-1;
+
+}
+
+body::before{
+
+    background:#3b82f6;
+    top:-120px;
+    left:-120px;
+
+    animation:float1 10s infinite alternate;
+
+}
+
+body::after{
+
+    background:#9333ea;
+
+    right:-120px;
+    bottom:-120px;
+
+    animation:float2 12s infinite alternate;
+
+}
+
+@keyframes float1{
+
+    from{
+        transform:translate(0,0);
+    }
+
+    to{
+        transform:translate(120px,80px);
+    }
+
+}
+
+@keyframes float2{
+
+    from{
+        transform:translate(0,0);
+    }
+
+    to{
+        transform:translate(-120px,-80px);
+    }
+
+}
+@keyframes gradientBG{
+    0%{
+        background-position:0% 50%;
+    }
+    50%{
+        background-position:100% 50%;
+    }
+    100%{
+        background-position:0% 50%;
+    }
+}
+/* ================= MEDICAL BACKGROUND ================= */
+
+.medical-bg{
+
+    position:fixed;
+    inset:0;
+    overflow:hidden;
+    z-index:-1;
+
+}
+
+.floating{
+
+    position:absolute;
+    font-size:45px;
+    opacity:.18;
+    animation:float 10s infinite ease-in-out;
+
+}
+
+.plus1{
+    top:8%;
+    left:8%;
+}
+
+.plus2{
+    top:25%;
+    right:10%;
+}
+
+.plus3{
+    bottom:10%;
+    left:20%;
+}
+
+.pill{
+    bottom:18%;
+    right:12%;
+}
+
+.dna{
+    top:45%;
+    left:6%;
+}
+
+.syringe{
+    right:25%;
+    top:60%;
+}
+
+.stethoscope{
+    left:35%;
+    bottom:12%;
+}
+
+@keyframes float{
+
+    0%{
+        transform:translateY(0px) rotate(0deg);
+    }
+
+    50%{
+        transform:translateY(-30px) rotate(10deg);
+    }
+
+    100%{
+        transform:translateY(0px) rotate(0deg);
+    }
+
+}
+
+/* ECG Heartbeat */
+
+.heartbeat{
+
+    position:absolute;
+
+    width:200%;
+
+    height:3px;
+
+    background:
+    linear-gradient(90deg,
+    transparent,
+    #00ff95,
+    transparent);
+
+    top:50%;
+
+    animation:heartbeatMove 5s linear infinite;
+
+    opacity:.6;
+
+}
+
+@keyframes heartbeatMove{
+
+    from{
+        transform:translateX(-50%);
+    }
+
+    to{
+        transform:translateX(0%);
+    }
+
+}
+
+/* ================= REGISTER PAGE ================= */
+
+.register-page{
+    width:100%;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 9%;
+    position:relative;
+}
+
+.left-panel h1{
+    font-size:72px;
+    font-weight:700;
+    line-height:1.1;
+    margin-bottom:25px;
+
+    color:white;
+
+    text-shadow:
+        0 0 12px rgba(255,255,255,.45),
+        0 0 30px rgba(37,99,235,.45);
+}
+
+.left-panel h1{
+    font-size:72px;
+    font-weight:700;
+    line-height:1.1;
+    margin-bottom:25px;
+}
+
+.left-panel p{
+    font-size:22px;
+    line-height:1.8;
+    opacity:.95;
+    max-width:520px;
+    animation:fadeText 1.5s ease;
+}
+
+.animation-area{
+    position:relative;
+    width:100%;
+    height:320px;
+    margin-top:40px;
+}
+
+.dna{
+
+    width:120px;
+    height:120px;
+
+    border:5px solid rgba(255,255,255,.4);
+
+    border-radius:50%;
+
+    position:absolute;
+
+    left:20px;
+    top:40px;
+
+    animation:rotateDNA 12s linear infinite;
+}
+
+.dna::before,
+.dna::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:60px;
+    height:60px;
+
+    border:4px solid rgba(255,255,255,.35);
+
+    border-radius:50%;
+}
+
+.dna::before{
+
+    left:25px;
+    top:-18px;
+
+}
+
+.dna::after{
+
+    left:25px;
+    bottom:-18px;
+
+}
+
+@keyframes rotateDNA{
+
+0%{
+transform:rotate(0deg) scale(1);
+}
+
+50%{
+transform:rotate(180deg) scale(1.08);
+}
+
+100%{
+transform:rotate(360deg) scale(1);
+}
+
+}
+
+.ecg{
+    position:relative;
+    width:420px;
+    height:120px;
+    margin-top:45px;
+    overflow:hidden;
+}
+
+.ecg svg{
+    width:900px;
+    height:120px;
+
+    stroke:#ffffff;
+    stroke-width:4;
+    fill:none;
+
+    filter:drop-shadow(0 0 10px rgba(255,255,255,.8));
+
+    stroke-dasharray:900;
+    stroke-dashoffset:900;
+
+    animation:drawECG 3s linear infinite;
+}
+
+@keyframes drawECG{
+
+    from{
+        stroke-dashoffset:900;
+    }
+
+    to{
+        stroke-dashoffset:0;
+    }
+
+}
+
+.circle{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.30),
+    rgba(255,255,255,.10)
+    );
+
+   box-shadow:0 0 30px rgba(255,255,255,.18);
+
+    backdrop-filter:blur(8px);
+
+    animation:floatCircle 6s ease-in-out infinite;
+}
+
+.c1{
+
+    width:70px;
+    height:70px;
+
+    right:80px;
+    top:20px;
+
+}
+
+.c2{
+
+    width:45px;
+    height:45px;
+
+    right:10px;
+    top:160px;
+
+    animation-delay:2s;
+}
+
+.c3{
+
+    width:90px;
+    height:90px;
+
+    right:120px;
+    bottom:0;
+
+    animation-delay:4s;
+}
+
+@keyframes floatCircle{
+
+    0%,100%{
+
+        transform:translateY(0px);
+
+    }
+
+    50%{
+
+        transform:translateY(-25px);
+
+    }
+
+}
+
+@keyframes fadeText{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* ===== AI Brain Network ===== */
+
+.brain-network{
+
+    position:relative;
+
+    width:300px;
+    height:220px;
+
+    margin-top:40px;
+
+}
+
+.node{
+
+    position:absolute;
+
+    width:18px;
+    height:18px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+    0 0 15px rgba(255,255,255,.9);
+
+    animation:pulseNode 2s infinite;
+
+}
+
+.n1{top:20px;left:120px;}
+.n2{top:70px;left:40px;}
+.n3{top:70px;right:40px;}
+.n4{top:140px;left:80px;}
+.n5{top:140px;right:80px;}
+.n6{bottom:10px;left:140px;}
+
+.brain-network::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+    linear-gradient(white,white) center/2px 100% no-repeat;
+
+    opacity:.25;
+
+}
+.brain-network::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    background:
+
+    linear-gradient(white,white) 50% 18%/2px 60px no-repeat,
+
+    linear-gradient(45deg,white,white) 32% 45%/120px 2px no-repeat,
+
+    linear-gradient(-45deg,white,white) 68% 45%/120px 2px no-repeat,
+
+    linear-gradient(45deg,white,white) 40% 75%/100px 2px no-repeat,
+
+    linear-gradient(-45deg,white,white) 60% 75%/100px 2px no-repeat;
+
+    opacity:.25;
+
+}
+.pulse{
+
+    position:absolute;
+
+    width:10px;
+    height:10px;
+
+    border-radius:50%;
+
+    background:#00ffd0;
+
+    box-shadow:0 0 18px #00ffd0;
+
+}
+
+.p1{
+
+    animation:movePulse1 3s linear infinite;
+
+}
+
+.p2{
+
+    animation:movePulse2 4s linear infinite;
+
+}
+@keyframes pulseNode{
+
+    0%,100%{
+
+        transform:scale(1);
+
+    }
+
+    50%{
+
+        transform:scale(1.4);
+
+    }
+
+}
+
+@keyframes movePulse1{
+
+    0%{
+        top:20px;
+        left:120px;
+    }
+
+    100%{
+        top:190px;
+        left:140px;
+    }
+
+}
+
+@keyframes movePulse2{
+
+    0%{
+        top:70px;
+        left:40px;
+    }
+
+    100%{
+        top:140px;
+        right:80px;
+    }
+
+}
+
+.left-panel{
+
+    animation:slideLeft .9s ease;
+
+}
+
+.login-container{
+
+    animation:slideRight .9s ease;
+
+}
+
+@keyframes slideLeft{
+
+    from{
+
+        opacity:0;
+        transform:translateX(-80px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateX(0);
+
+    }
+
+}
+
+@keyframes slideRight{
+
+    from{
+
+        opacity:0;
+        transform:translateX(80px);
+
+    }
+
+    to{
+
+        opacity:1;
+        transform:translateX(0);
+
+    }
+
+}

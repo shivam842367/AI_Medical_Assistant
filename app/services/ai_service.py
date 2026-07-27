@@ -1,23 +1,27 @@
 import os
+from typing import Optional
 
 from dotenv import load_dotenv
 from google import genai
 from sqlalchemy.orm import Session
 
+from app.config.settings import settings
 from app.models.chat import ChatHistory
 from app.schemas.ai import ChatResponse
-#from app.services.symptom_service import get_symptom_prompt
 
 load_dotenv()
 
-def get_genai_client():
-    api_key = os.getenv("GEMINI_API_KEY")
+
+def get_genai_client() -> Optional[genai.Client]:
+    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
     if not api_key:
         return None
     try:
         return genai.Client(api_key=api_key)
-    except Exception:
+    except Exception as e:
+        print(f"Failed to initialize GenAI Client: {e}")
         return None
+
 
 def chat_with_ai(
     db: Session,
@@ -87,37 +91,38 @@ User Question:
 {message}
 """
 
-    try:
-        client = get_genai_client()
-        response = None
-        if not client:
-            answer = "⚠ GEMINI_API_KEY environment variable is not configured. Please set your Gemini API key in .env or Streamlit secrets."
-        else:
+    client = get_genai_client()
+    if not client:
+        answer = """
+⚠ GEMINI_API_KEY is not configured or invalid.
+
+Please configure a valid GEMINI_API_KEY in your environment variables to enable AI chat functionality.
+
+⚠ Medical Disclaimer:
+This AI assistant provides general health information only.
+Please consult a qualified healthcare professional for diagnosis and treatment.
+"""
+    else:
+        try:
+            model_name = settings.GEMINI_MODEL or "gemini-2.5-flash"
             response = client.models.generate_content(
-                model="models/gemini-3.5-flash",
+                model=model_name,
                 contents=medical_prompt
             )
 
-        if response is not None:
-            print("\n================ GEMINI RESPONSE ================")
-            print(response)
-            print("=================================================\n")
+            if getattr(response, "text", None):
+                answer = response.text
+            elif (
+                hasattr(response, "candidates")
+                and response.candidates
+                and response.candidates[0].content.parts
+            ):
+                answer = response.candidates[0].content.parts[0].text
+            else:
+                answer = "Sorry! I couldn't generate a response."
 
-        if response and getattr(response, "text", None):
-            answer = response.text
-
-        elif (
-            hasattr(response, "candidates")
-            and response.candidates
-            and response.candidates[0].content.parts
-        ):
-            answer = response.candidates[0].content.parts[0].text
-
-        else:
-            answer = "Sorry! I couldn't generate a response."
-
-        # Medical Disclaimer
-        answer += """
+            # Medical Disclaimer
+            answer += """
 
 ---------------------------------------
 
@@ -128,19 +133,18 @@ This AI assistant provides general health information only.
 Please consult a qualified healthcare professional for diagnosis and treatment.
 """
 
-    except Exception as e:
+        except Exception as e:
+            print("\n============= GEMINI ERROR =============")
+            print(e)
+            print("========================================\n")
 
-        print("\n============= GEMINI ERROR =============")
-        print(e)
-        print("========================================\n")
+            answer = """
+⚠ AI service is temporarily unavailable.
 
-        answer = """
-        ⚠ AI service is temporarily unavailable.
+Please try again in a few moments.
 
-        Please try again in a few moments.
-
-        If the issue persists, please check your internet connection or try again later.
-        """
+If the issue persists, please check your internet connection or API key.
+"""
 
     chat = ChatHistory(
         user_id=user_id,
