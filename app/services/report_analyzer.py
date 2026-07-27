@@ -23,19 +23,26 @@ def get_groq_client() -> Optional[Groq]:
     api_key = (
         getattr(settings, "GROQ_API_KEY", None)
         or os.getenv("GROQ_API_KEY")
-        or getattr(settings, "GEMINI_API_KEY", None)
-        or os.getenv("GEMINI_API_KEY")
     )
     if not api_key:
-        return None
-    api_key = str(api_key).strip('"\' ')
+        # Fallback check if user put groq key into GEMINI_API_KEY
+        gemini_key = getattr(settings, "GEMINI_API_KEY", None) or os.getenv("GEMINI_API_KEY")
+        if gemini_key and str(gemini_key).strip('"\' ').startswith("gsk_"):
+            api_key = gemini_key
+
     if not api_key:
         return None
+
+    api_key = str(api_key).strip('"\' ')
+    if not api_key or not api_key.startswith("gsk_"):
+        return None
+
     try:
         return Groq(api_key=api_key)
     except Exception as e:
         print(f"Failed to initialize Groq Client: {e}")
         return None
+
 
 
 def extract_text(file_path: str):
