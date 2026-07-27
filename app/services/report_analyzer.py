@@ -136,7 +136,7 @@ Please set a valid GEMINI_API_KEY in your environment variables to analyze medic
 """
 
     try:
-        model_name = settings.GEMINI_MODEL or "gemini-2.5-flash"
+        model_name = settings.GEMINI_MODEL or "gemini-2.0-flash"
         response = client.models.generate_content(
             model=model_name,
             contents=prompt
