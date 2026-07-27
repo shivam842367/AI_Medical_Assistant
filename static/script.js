@@ -55,6 +55,13 @@ async function typeMessage(element, text) {
 
 }
 
+// Helper for Unauthorized response
+function handleUnauthorized() {
+    localStorage.removeItem("token");
+    alert("Session expired or invalid credentials. Please log in again.");
+    window.location.href = "/login";
+}
+
 // Load Chat History
 async function loadHistory() {
 
@@ -65,6 +72,12 @@ async function loadHistory() {
                 Authorization: "Bearer " + token
             }
         });
+
+        if (response.status === 401) {
+            localStorage.removeItem("token");
+            window.location.href = "/login";
+            return;
+        }
 
         if (!response.ok) return;
 
@@ -119,6 +132,11 @@ async function deleteChat(chatId) {
 
         });
 
+        if (response.status === 401) {
+            handleUnauthorized();
+            return;
+        }
+
         const data = await response.json();
 
         if (!response.ok) {
@@ -147,9 +165,17 @@ function openChat(chatId){
         }
     })
 
-    .then(res=>res.json())
+    .then(res => {
+        if (res.status === 401) {
+            handleUnauthorized();
+            return null;
+        }
+        return res.json();
+    })
 
     .then(chats=>{
+
+        if(!chats) return;
 
         const chat=chats.find(c=>c.id===chatId);
 
@@ -236,6 +262,11 @@ async function sendMessage() {
 
         if (typing) {
             typing.remove();
+        }
+
+        if (response.status === 401 || data.detail === "Could not validate credentials") {
+            handleUnauthorized();
+            return;
         }
 
         if (!response.ok) {
