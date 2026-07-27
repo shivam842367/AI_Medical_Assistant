@@ -2,7 +2,7 @@ import os
 from typing import Optional
 
 from dotenv import load_dotenv
-from google import genai
+from groq import Groq
 from sqlalchemy.orm import Session
 
 from app.config.settings import settings
@@ -12,17 +12,22 @@ from app.schemas.ai import ChatResponse
 load_dotenv()
 
 
-def get_genai_client() -> Optional[genai.Client]:
-    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
+def get_groq_client() -> Optional[Groq]:
+    api_key = (
+        getattr(settings, "GROQ_API_KEY", None)
+        or os.getenv("GROQ_API_KEY")
+        or getattr(settings, "GEMINI_API_KEY", None)
+        or os.getenv("GEMINI_API_KEY")
+    )
     if not api_key:
         return None
     api_key = str(api_key).strip('"\' ')
     if not api_key:
         return None
     try:
-        return genai.Client(api_key=api_key)
+        return Groq(api_key=api_key)
     except Exception as e:
-        print(f"Failed to initialize GenAI Client: {e}")
+        print(f"Failed to initialize Groq Client: {e}")
         return None
 
 
@@ -73,7 +78,7 @@ Your symptoms may indicate a serious medical emergency.
 
         return ChatResponse(response=answer)
 
-    # ---------------- Gemini Prompt ----------------
+    # ---------------- Medical Prompt ----------------
     medical_prompt = f"""
 You are an AI Medical Assistant.
 
@@ -94,12 +99,12 @@ User Question:
 {message}
 """
 
-    client = get_genai_client()
+    client = get_groq_client()
     if not client:
         answer = """
-⚠ GEMINI_API_KEY is not configured or invalid.
+⚠ GROQ_API_KEY is not configured or invalid.
 
-Please configure a valid GEMINI_API_KEY in your environment variables to enable AI chat functionality.
+Please configure a valid GROQ_API_KEY in your environment variables to enable AI chat functionality.
 
 ⚠ Medical Disclaimer:
 This AI assistant provides general health information only.
@@ -107,20 +112,37 @@ Please consult a qualified healthcare professional for diagnosis and treatment.
 """
     else:
         try:
-            model_name = settings.GEMINI_MODEL or "gemini-2.0-flash"
-            if not model_name or "2.5" in model_name:
-                model_name = "gemini-2.0-flash"
+            model_name = (
+                getattr(settings, "GROQ_MODEL", None)
+                or os.getenv("GROQ_MODEL")
+                or "llama-3.3-70b-versatile"
+            )
             models_to_try = [model_name]
-            if "gemini-2.0-flash-lite" not in models_to_try:
-                models_to_try.append("gemini-2.0-flash-lite")
+            for fallback in [
+                "llama-3.3-70b-versatile",
+                "llama-3.1-8b-instant",
+                "llama3-70b-8192",
+                "llama3-8b-8192"
+            ]:
+                if fallback not in models_to_try:
+                    models_to_try.append(fallback)
 
             response = None
             last_exception = None
             for m in models_to_try:
                 try:
-                    response = client.models.generate_content(
+                    response = client.chat.completions.create(
                         model=m,
-                        contents=medical_prompt
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": "You are an AI Medical Assistant."
+                            },
+                            {
+                                "role": "user",
+                                "content": medical_prompt
+                            }
+                        ]
                     )
                     break
                 except Exception as e:
@@ -129,14 +151,8 @@ Please consult a qualified healthcare professional for diagnosis and treatment.
             if not response and last_exception:
                 raise last_exception
 
-            if getattr(response, "text", None):
-                answer = response.text
-            elif (
-                hasattr(response, "candidates")
-                and response.candidates
-                and response.candidates[0].content.parts
-            ):
-                answer = response.candidates[0].content.parts[0].text
+            if response and response.choices and response.choices[0].message and response.choices[0].message.content:
+                answer = response.choices[0].message.content.strip()
             else:
                 answer = "Sorry! I couldn't generate a response."
 
@@ -154,16 +170,16 @@ Please consult a qualified healthcare professional for diagnosis and treatment.
 
         except Exception as e:
             err_str = str(e)
-            print("\n============= GEMINI ERROR =============")
+            print("\n============= GROQ ERROR =============")
             print(e)
-            print("========================================\n")
+            print("======================================\n")
 
             answer = f"""
-⚠ Gemini Service Error:
+⚠ Groq Service Error:
 
 {err_str}
 
-Please verify that a valid GEMINI_API_KEY is configured in your Render environment variables.
+Please verify that a valid GROQ_API_KEY is configured in your environment variables.
 """
 
     chat = ChatHistory(

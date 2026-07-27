@@ -3,7 +3,7 @@ from typing import Optional
 import fitz
 
 from dotenv import load_dotenv
-from google import genai
+from groq import Groq
 from app.config.settings import settings
 
 load_dotenv()
@@ -19,14 +19,22 @@ def get_ocr_reader():
     return _easyocr_reader
 
 
-def get_genai_client() -> Optional[genai.Client]:
-    api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
+def get_groq_client() -> Optional[Groq]:
+    api_key = (
+        getattr(settings, "GROQ_API_KEY", None)
+        or os.getenv("GROQ_API_KEY")
+        or getattr(settings, "GEMINI_API_KEY", None)
+        or os.getenv("GEMINI_API_KEY")
+    )
+    if not api_key:
+        return None
+    api_key = str(api_key).strip('"\' ')
     if not api_key:
         return None
     try:
-        return genai.Client(api_key=api_key)
+        return Groq(api_key=api_key)
     except Exception as e:
-        print(f"Failed to initialize GenAI Client: {e}")
+        print(f"Failed to initialize Groq Client: {e}")
         return None
 
 
@@ -127,29 +135,46 @@ Medical Report:
 {report_text}
 """
 
-    client = get_genai_client()
+    client = get_groq_client()
     if not client:
         return """
-⚠ GEMINI_API_KEY is not configured or invalid.
+⚠ GROQ_API_KEY is not configured or invalid.
 
-Please set a valid GEMINI_API_KEY in your environment variables to analyze medical reports.
+Please set a valid GROQ_API_KEY in your environment variables to analyze medical reports.
 """
 
     try:
-        model_name = settings.GEMINI_MODEL or "gemini-2.0-flash"
-        if not model_name or "2.5" in model_name:
-            model_name = "gemini-2.0-flash"
+        model_name = (
+            getattr(settings, "GROQ_MODEL", None)
+            or os.getenv("GROQ_MODEL")
+            or "llama-3.3-70b-versatile"
+        )
         models_to_try = [model_name]
-        if "gemini-2.0-flash-lite" not in models_to_try:
-            models_to_try.append("gemini-2.0-flash-lite")
+        for fallback in [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "llama3-70b-8192",
+            "llama3-8b-8192"
+        ]:
+            if fallback not in models_to_try:
+                models_to_try.append(fallback)
 
         response = None
         last_exception = None
         for m in models_to_try:
             try:
-                response = client.models.generate_content(
+                response = client.chat.completions.create(
                     model=m,
-                    contents=prompt
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are an experienced AI Medical Report Analyzer."
+                        },
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ]
                 )
                 break
             except Exception as e:
@@ -158,15 +183,8 @@ Please set a valid GEMINI_API_KEY in your environment variables to analyze medic
         if not response and last_exception:
             raise last_exception
 
-        if getattr(response, "text", None):
-            return response.text
-
-        elif (
-            hasattr(response, "candidates")
-            and response.candidates
-            and response.candidates[0].content.parts
-        ):
-            return response.candidates[0].content.parts[0].text
+        if response and response.choices and response.choices[0].message and response.choices[0].message.content:
+            return response.choices[0].message.content.strip()
 
         else:
             return "Unable to generate report analysis."
