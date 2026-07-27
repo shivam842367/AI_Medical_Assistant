@@ -16,6 +16,9 @@ def get_genai_client() -> Optional[genai.Client]:
     api_key = settings.GEMINI_API_KEY or os.getenv("GEMINI_API_KEY")
     if not api_key:
         return None
+    api_key = str(api_key).strip('"\' ')
+    if not api_key:
+        return None
     try:
         return genai.Client(api_key=api_key)
     except Exception as e:
@@ -136,16 +139,17 @@ Please consult a qualified healthcare professional for diagnosis and treatment.
 """
 
         except Exception as e:
+            err_str = str(e)
             print("\n============= GEMINI ERROR =============")
             print(e)
             print("========================================\n")
 
-            answer = """
-⚠ AI service is temporarily unavailable.
+            answer = f"""
+⚠ Gemini Service Error:
 
-Please try again in a few moments.
+{err_str}
 
-If the issue persists, please check your internet connection or API key.
+Please verify that a valid GEMINI_API_KEY is configured in your Render environment variables.
 """
 
     chat = ChatHistory(
