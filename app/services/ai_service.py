@@ -110,10 +110,24 @@ Please consult a qualified healthcare professional for diagnosis and treatment.
             model_name = settings.GEMINI_MODEL or "gemini-2.0-flash"
             if not model_name or "2.5" in model_name:
                 model_name = "gemini-2.0-flash"
-            response = client.models.generate_content(
-                model=model_name,
-                contents=medical_prompt
-            )
+            models_to_try = [model_name]
+            if "gemini-2.0-flash-lite" not in models_to_try:
+                models_to_try.append("gemini-2.0-flash-lite")
+
+            response = None
+            last_exception = None
+            for m in models_to_try:
+                try:
+                    response = client.models.generate_content(
+                        model=m,
+                        contents=medical_prompt
+                    )
+                    break
+                except Exception as e:
+                    last_exception = e
+
+            if not response and last_exception:
+                raise last_exception
 
             if getattr(response, "text", None):
                 answer = response.text
